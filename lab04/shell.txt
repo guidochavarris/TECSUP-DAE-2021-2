@@ -1,0 +1,70 @@
+$ python manage.py shell
+Python 3.9.4 (tags/v3.9.4:1f2e308, Apr  6 2021, 13:40:21) [MSC v.1928 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+(InteractiveConsole)
+>>> from recetas.models import Autor, Receta, Comentario 
+>>> a = Autor(nombre='Javier Perez', email='eperez@mail.com')
+>>> a.save()
+>>> Autor.objects.all()
+<QuerySet [<Autor: Javier Perez>]>
+>>> primer = Autor.objects.get(pk=1)
+>>> r1 = Receta.objects.create(
+... receta=r1,
+...        
+KeyboardInterrupt
+>>> r1 = Receta.objects.create(
+... titulo='Huevo frito',
+... ingredientes='huevo, sal, aceite',
+... preparacion='Calentar la sarten y bla bla bla',
+... autor=primer)
+>>> Receta.objects.all()
+<QuerySet [<Receta: Receta object (1)>]>
+>>> c1 = Comentario.objects.create(
+... receta=r1,
+... texto='Un clasica para el desayuno')
+>>> Comentario.objects.all()
+<QuerySet [<Comentario: Un clasica para el desayuno>]>
+>>> r2 = Receta.objects.create(
+... titulo='Agua Hervida',
+... ingredientes='agua',
+... preparacion='poner la tetera y bla bla bla',
+... autor=primer)
+>>> Receta.objects.all()
+<QuerySet [<Receta: Receta object (1)>, <Receta: Receta object (2)>]>
+>>> Receta.objects.exclude(ingredientes__startswith='A')
+<QuerySet [<Receta: Receta object (1)>]>
+>>> Receta.objects.filter(preparacion__contains='tetera') 
+<QuerySet [<Receta: Receta object (2)>]>
+>>> Receta.objects.all().order_by('titulo')
+<QuerySet [<Receta: Receta object (2)>, <Receta: Receta object (1)>]>
+>>> Receta.objects.all().order_by('titulo').reverse()
+<QuerySet [<Receta: Receta object (1)>, <Receta: Receta object (2)>]>
+>>> Comentario.objects.filter(receta=r1) 
+<QuerySet [<Comentario: Un clasica para el desayuno>]>
+>>> Comentario.objects.filter(receta=r2) 
+<QuerySet []>
+>>> Receta.objects.filter(titulo='Huevo frito').update(titulo='Huevito frito') 
+1
+>>> Receta.objects.all()
+<QuerySet [<Receta: Receta object (1)>, <Receta: Receta object (2)>]>
+>>> c2 = Comentario.objects.create(
+... receta=r1,
+... texto='Para pasar el hambre')
+>>> Comentario.objects.filter(receta=r1).count()
+2
+>>> Comentario.objects.filter(receta=r2).count()
+0
+>>> c3 = Comentario.objects.create(
+... receta=r2,
+... texto='Receta sin sentido')
+>>> Comentario.objects.filter(receta=r2)
+<QuerySet [<Comentario: Receta sin sentido>]>
+>>> c3.delete()
+(1, {'recetas.Comentario': 1})
+>>> Comentario.objects.filter(receta=r2)
+<QuerySet []>
+>>> Receta.objects.get(titulo='Agua Hervida').autor.nombre
+'Javier Perez'
+>>> Receta.objects.get(titulo='Agua Hervida').autor.email
+'eperez@mail.com'
+>>>
